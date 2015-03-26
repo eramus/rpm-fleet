@@ -95,8 +95,8 @@ fi
 %config(noreplace) %{_sysconfdir}/systemd/system/%{name}.service
 
 %changelog
-* Wed Oct 08 2014 Jan Nabbefeld <jan.nabbefeld@kreuzwerker.de> 0.1.0
-- Initial spec.
-* Thur Mar 26 2015 Louis Zeun <louiszeun@louiszeun.com> 0.2.0
+* Thu Mar 26 2015 Louis Zeun <louiszeun@louiszeun.com> 0.2.0
 - Update to v.0.9.1
 - Provide conf file to manage fleetd parameters
+* Wed Oct 08 2014 Jan Nabbefeld <jan.nabbefeld@kreuzwerker.de> 0.1.0
+- Initial spec.
