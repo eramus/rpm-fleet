@@ -17,6 +17,7 @@
 # sudo yum -y install rpmdevtools && rpmdev-setuptree
 # wget https://raw.github.com/odise/rpm-fleet/master/fleet.spec -O ~/rpmbuild/SPECS/fleet.spec
 # wget https://raw.github.com/odise/rpm-fleet/master/fleet.service -O ~/rpmbuild/SOURCE/fleet.service
+# wget https://raw.github.com/odise/rpm-fleet/master/fleet.socket -O ~/rpmbuild/SOURCE/fleet.socket
 # wget https://raw.github.com/odise/rpm-fleet/master/fleet.conf -O ~/rpmbuild/SOURCE/fleet.conf
 # wget https://github.com/coreos/fleet/releases/download/v0.9.1/fleet-v0.9.1-linux-amd64.tar.gz -O ~/rpmbuild/SOURCES/fleet-v0.9.1-linux-amd64.tar.gz
 # rpmbuild -bb ~/rpmbuild/SPECS/fleet.spec
@@ -35,6 +36,8 @@ URL:       https://github.com/coreos/fleet
 Group:     System Environment/Daemons
 Source0:   https://github.com/coreos/%{name}/releases/download/v%{version}/%{name}-v%{version}-linux-amd64.tar.gz
 Source1:   %{name}.service
+Source2:   %{name}.socket
+Source3:   %{name}.conf
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 Packager:  Jan Nabbefeld <jan.nabbefeld@kreuzwerker.de>, Louis Zeun <louiszeun@louiszeun.com>
 Requires(pre): shadow-utils
@@ -69,6 +72,7 @@ install    -m 644 %{_builddir}/%{name}-v%{version}-linux-amd64/README.md    %{bu
 
 install -d -m 755 %{buildroot}/%{_sysconfdir}/systemd/system
 install    -m 644 %_sourcedir/%{name}.service    %{buildroot}/%{_sysconfdir}/systemd/system/%{name}.service
+install    -m 644 %_sourcedir/%{name}.socket    %{buildroot}/%{_sysconfdir}/systemd/system/%{name}.socket
 
 %clean
 rm -rf %{buildroot}
@@ -93,6 +97,7 @@ fi
 %{_sysconfdir}/fleet/%{name}.conf
 %{_defaultdocdir}/%{name}-v%{version}/*.md
 %config(noreplace) %{_sysconfdir}/systemd/system/%{name}.service
+%config(noreplace) %{_sysconfdir}/systemd/system/%{name}.socket
 
 %changelog
 * Thu Mar 26 2015 Louis Zeun <louiszeun@louiszeun.com> 0.2.0
