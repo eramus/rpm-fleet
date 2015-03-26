@@ -17,7 +17,8 @@
 # sudo yum -y install rpmdevtools && rpmdev-setuptree
 # wget https://raw.github.com/odise/rpm-fleet/master/fleet.spec -O ~/rpmbuild/SPECS/fleet.spec
 # wget https://raw.github.com/odise/rpm-fleet/master/fleet.service -O ~/rpmbuild/SOURCE/fleet.service
-# wget https://github.com/coreos/fleet/releases/download/v0.8.3/fleet-v0.8.3-linux-amd64.tar.gz -O ~/rpmbuild/SOURCES/fleet-v0.8.3-linux-amd64.tar.gz
+# wget https://raw.github.com/odise/rpm-fleet/master/fleet.conf -O ~/rpmbuild/SOURCE/fleet.conf
+# wget https://github.com/coreos/fleet/releases/download/v0.9.1/fleet-v0.9.1-linux-amd64.tar.gz -O ~/rpmbuild/SOURCES/fleet-v0.9.1-linux-amd64.tar.gz
 # rpmbuild -bb ~/rpmbuild/SPECS/fleet.spec
 
 %define debug_package %{nil}
@@ -26,7 +27,7 @@
 %define etcd_data  %{_localstatedir}/lib/%{name}
 
 Name:      fleet
-Version:   0.8.3
+Version:   0.9.1
 Release:   1
 Summary:   A Distributed init System.
 License:   Apache 2.0
@@ -35,16 +36,16 @@ Group:     System Environment/Daemons
 Source0:   https://github.com/coreos/%{name}/releases/download/v%{version}/%{name}-v%{version}-linux-amd64.tar.gz
 Source1:   %{name}.service
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
-Packager:  Jan Nabbefeld <jan.nabbefeld@kreuzwerker.de>
+Packager:  Jan Nabbefeld <jan.nabbefeld@kreuzwerker.de>, Louis Zeun <louiszeun@louiszeun.com>
 Requires(pre): shadow-utils
 Requires(post): /bin/systemctl
 Requires(preun): /bin/systemctl
 Requires(postun): /bin/systemctl
 
 %description
-Fleet ties together systemd and etcd into a distributed init system. 
+Fleet ties together systemd and etcd into a distributed init system.
 Think of it as an extension of systemd that operates at the cluster level
-instead of the machine level. This project is very low level and is 
+instead of the machine level. This project is very low level and is
 designed as a foundation for higher order orchestration.
 
 %prep
@@ -59,6 +60,9 @@ echo  %{buildroot}
 install -d -m 755 %{buildroot}/%{_bindir}
 install    -m 755 %{_builddir}/%{name}-v%{version}-linux-amd64/fleetd    %{buildroot}/%{_bindir}
 install    -m 755 %{_builddir}/%{name}-v%{version}-linux-amd64/fleetctl %{buildroot}/%{_bindir}
+
+install -d -m 755 %{buildroot}/%{_sysconfdir}/fleet
+install    -m 644 %_sourcedir/%{name}.conf    %{buildroot}/%{_sysconfdir}/fleet/%{name}.conf
 
 install -d -m 755 %{buildroot}/usr/share/doc/%{name}-v%{version}
 install    -m 644 %{_builddir}/%{name}-v%{version}-linux-amd64/README.md    %{buildroot}/%{_defaultdocdir}/%{name}-v%{version}
@@ -86,9 +90,13 @@ fi
 %files
 %defattr(-,root,root)
 %{_bindir}/fleet*
+%{_sysconfdir}/fleet/%{name}.conf
 %{_defaultdocdir}/%{name}-v%{version}/*.md
 %config(noreplace) %{_sysconfdir}/systemd/system/%{name}.service
 
 %changelog
 * Wed Oct 08 2014 Jan Nabbefeld <jan.nabbefeld@kreuzwerker.de> 0.1.0
 - Initial spec.
+* Thur Mar 26 2015 Louis Zeun <louiszeun@louiszeun.com> 0.2.0
+- Update to v.0.9.1
+- Provide conf file to manage fleetd parameters
