@@ -1,7 +1,10 @@
 [Unit]
 Description=fleet
-Requires=etcd.service
+Wants=etcd.service
 After=etcd.service
+
+Wants=fleet.socket
+After=fleet.socket
 
 [Service]
 ExecStart=/usr/bin/fleetd --config=/etc/fleet/fleet.conf
